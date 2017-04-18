@@ -7,6 +7,7 @@
 .idea/
 node_modules/
 dist/
+npm-debug.log
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
