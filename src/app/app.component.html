@@ -1,3 +1,6 @@
 <h1>
   {{title}}
 </h1>
+
+<input [(ngModel)]="amount" type="text">
+<pre>{{amount | currency : USD}}</pre>
