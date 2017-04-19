@@ -2,12 +2,17 @@
   {{title}}
 </h1>
 
-<input [(ngModel)]="amount" type="text" pattern="[0-9]+(\.[0-9][0-9]?)?">
+<p>
+  <label for="currencyInput">Demo:</label>
+  <input id="currencyInput" [(ngModel)]="amount" type="text" currency-input>
+</p>
 
-<div>Formated:
-  <pre>{{amountText}}</pre>
-</div>
+<p>
+  <label for="numberInput">Plain Numeric:</label>
+  <input id="numberInput" type="number" [(ngModel)]="amount" step="0.01" placeholder="0.00" value="0.00">
+</p>
+
 <div>
-  Raw value:
-  <pre>{{amount}}</pre>
+  Formatted value:
+  <pre>{{amount | currencyInput : formatOptions }}</pre>
 </div>

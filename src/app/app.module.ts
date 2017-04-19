@@ -5,7 +5,7 @@ import {HttpModule} from '@angular/http';
 
 import {AppComponent} from './app.component';
 import {CurrencyMaskModule} from 'ng2-currency-mask';
-import {MoneyMaskModule} from 'ng2-money-mask'
+import {CurrencyInputModule} from "app/currency-input/currency-input.module";
 
 @NgModule({
   declarations: [
@@ -16,7 +16,7 @@ import {MoneyMaskModule} from 'ng2-money-mask'
     FormsModule,
     HttpModule,
     CurrencyMaskModule,
-    MoneyMaskModule
+    CurrencyInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
