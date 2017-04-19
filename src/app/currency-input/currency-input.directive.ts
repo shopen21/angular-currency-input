@@ -1,4 +1,4 @@
-import {Directive, ElementRef, forwardRef, HostListener, Input, Provider, Renderer} from "@angular/core";
+import {Directive, ElementRef, forwardRef, HostListener, Input, Provider, Renderer2} from "@angular/core";
 import {CurrencyFormatOptions} from "app/currency-input/currency-format-options";
 import {ControlValueAccessor, DefaultValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {CurrencyInputPipe} from "app/currency-input/currency-input.pipe";
@@ -15,7 +15,7 @@ const CUSTOM_VALUE_ACCESSOR: Provider = {
 })
 export class CurrencyInputDirective implements ControlValueAccessor {
 
-  @Input('currencyInput') inputOptions: CurrencyFormatOptions = new CurrencyFormatOptions();
+  @Input('sho-currency-input') inputOptions: CurrencyFormatOptions = new CurrencyFormatOptions();
 
   @HostListener('input', ['$event.target.value']) onInput(userInputValue): void {
     let parsedNumber = this.transformer.parse(userInputValue, this.inputOptions);
@@ -23,6 +23,7 @@ export class CurrencyInputDirective implements ControlValueAccessor {
       this.doWriteValue(this.numericValue);
     }
     else {
+      this.numericValue = parsedNumber;
       this.onChange(parsedNumber);
     }
   }
@@ -41,12 +42,14 @@ export class CurrencyInputDirective implements ControlValueAccessor {
 
   private numericValue: number = Number.NaN;
 
-  private onChange = (_:number) => {
+  private onChange = (_: number) => {
   };
 
-  constructor(private element: ElementRef,
-              private transformer: CurrencyInputPipe,
-              private valueAccessor: DefaultValueAccessor) {
+  constructor(private transformer: CurrencyInputPipe,
+              private valueAccessor: DefaultValueAccessor,
+              private element: ElementRef,
+              private renderer: Renderer2) {
+
   }
 
   writeValue(numericValue: number): void {
@@ -56,7 +59,9 @@ export class CurrencyInputDirective implements ControlValueAccessor {
 
   private doWriteValue(numericValue: number): void {
     let stringValue = (this.isFocused ? CurrencyInputPipe.toNumericString : this.transformer.transform)(numericValue, this.inputOptions);
+    this.renderer.setProperty(this.element.nativeElement, 'maxLength', Number.MAX_VALUE);
     this.valueAccessor.writeValue(stringValue);
+    this.renderer.setProperty(this.element.nativeElement, 'maxLength', this.isFocused ? 17 : Number.MAX_VALUE);
   }
 
   registerOnChange(fn: any): void {

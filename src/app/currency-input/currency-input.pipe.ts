@@ -10,7 +10,6 @@ export class CurrencyInputPipe implements PipeTransform {
     let fraction = normalizedValue % 1;
     let integer = Math.floor(normalizedValue);
 
-
     let pieces = {
       prefix: options.prefix,
       integer: CurrencyInputPipe.integerToThousands(integer, options.thousandSeparator),
@@ -23,17 +22,12 @@ export class CurrencyInputPipe implements PipeTransform {
 
   parse(value: string, options: CurrencyFormatOptions = new CurrencyFormatOptions()): number {
     if (!value) return 0;
-    value = value.slice(options.prefix.length);
-    if (options.suffix.length) {
-      value = value.slice(0, -options.suffix.length);
-    }
-    let [ integerPart, fractionPart = '' ] = (value || '').split(options.decimalSeparator);
-    integerPart = integerPart.replace(new RegExp(`\\${options.thousandSeparator}`), '');
-
-    return parseFloat(`${integerPart}.${fractionPart}`);
+    var regexp = new RegExp(/^-?[0-9]+(\.[0-9]{0,2})?$/);
+    if (!regexp.test(value)) return Number.NaN;
+    return parseFloat(value);
   }
 
-  static toNumericString(value: number, options: CurrencyFormatOptions): string {
+  public static toNumericString(value: number, options: CurrencyFormatOptions): string {
     return value.toFixed(options.decimalLength);
   }
 
@@ -41,7 +35,7 @@ export class CurrencyInputPipe implements PipeTransform {
     let str = value.toFixed(0);
     let resultArr = [];
     while (str.length > 0) {
-      resultArr.push(str.slice(-3));
+      resultArr.unshift(str.slice(-3));
       str = str.slice(0, -3);
     }
 
@@ -49,9 +43,13 @@ export class CurrencyInputPipe implements PipeTransform {
   }
 
   private static fractionToString(value: number, decimalLength: number): string {
+    value = Math.abs(value);
     decimalLength = Math.floor(decimalLength);
     decimalLength = decimalLength >= 0 ? decimalLength : 0;
-    let multiplier = Math.pow(10, decimalLength);
-    return Math.floor(value * multiplier).toFixed(0);
+
+    let precision = Math.max(1, decimalLength);
+
+
+    return value.toPrecision(decimalLength + 1).substr(2, decimalLength);
   }
 }

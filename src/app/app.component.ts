@@ -10,9 +10,5 @@ export class AppComponent {
   title = 'sho works!';
   amount: number = 234;
 
-  public formatOptions: CurrencyFormatOptions;
-
-  constructor(){
-    this.formatOptions = new CurrencyFormatOptions('$ ', ' cents', 2, '; ', ',');
-  }
+  public formatOptions: CurrencyFormatOptions = new CurrencyFormatOptions('', ' cents', 2, ' dollars ', ',');
 }
