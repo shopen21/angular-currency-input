@@ -9,8 +9,9 @@ import NumberFormat = Intl.NumberFormat;
 export class AppComponent {
   title = 'sho works!';
   amount: number | null = 234.55;
+  useFormat = true;
 
-  public format: NumberFormat = new NumberFormat('pl-PL', {
+  private _format: NumberFormat = new NumberFormat('pl-PL', {
     style: 'currency',
     currency: 'PLN',
     currencyDisplay: 'symbol',
@@ -19,6 +20,10 @@ export class AppComponent {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+
+  public get format(): NumberFormat {
+    return this.useFormat ? this._format : null;
+  }
 
   public setNull(): void {
     this.amount = null;

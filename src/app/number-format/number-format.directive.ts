@@ -1,4 +1,4 @@
-import {Directive, forwardRef, HostListener, Input, Provider} from "@angular/core";
+import {Directive, forwardRef, HostListener, Input, OnChanges, Provider, SimpleChanges} from "@angular/core";
 import {ControlValueAccessor, DefaultValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 import {NumberFormatPipe} from "app/number-format/number-format.pipe";
@@ -10,12 +10,34 @@ const CUSTOM_VALUE_ACCESSOR: Provider = {
   multi: true
 };
 
+const DEFAULT_NUMBER_FORMAT = new NumberFormat('en-US', {
+  style: 'decimal',
+  minimumIntegerDigits: 1,
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+  useGrouping: false
+});
+
 @Directive({
   selector: 'input[number-format][type="text"]',
   providers: [CUSTOM_VALUE_ACCESSOR]
 })
-export class NumberFormatDirective implements ControlValueAccessor {
-  @Input('number-format') numberFormat: NumberFormat;
+export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.numberFormat) {
+      this.doWriteValue(this.numericValue);
+    }
+  }
+
+  private _numberFormat: NumberFormat = DEFAULT_NUMBER_FORMAT;
+
+  @Input('number-format') set numberFormat(value: NumberFormat) {
+    this._numberFormat = value ? value : DEFAULT_NUMBER_FORMAT;
+  }
+
+  get numberFormat(): NumberFormat {
+    return this._numberFormat;
+  }
 
   @HostListener('input', ['$event.target.value']) onInput(userInputValue): void {
     let parsedNumber = this.transformer.parse(userInputValue, this.numberFormat);
@@ -65,6 +87,9 @@ export class NumberFormatDirective implements ControlValueAccessor {
   }
 
   writeValue(numericValue: number): void {
+    if (!numericValue) {
+      numericValue = 0;
+    }
     this.numericValue = numericValue;
     this.doWriteValue(numericValue);
   }

@@ -7,12 +7,21 @@
   <input id="currencyInput" [(ngModel)]="amount" type="text" [number-format]="format">
 </p>
 
+<div>
+  Formatted value:
+  <pre>{{amount | numberFormat : format }}</pre>
+</div>
+
 <p>
   <label for="numberInput">Plain Numeric:</label>
   <input id="numberInput" type="number" [(ngModel)]="amount" step="0.01" placeholder="0.00" value="0.00">
 </p>
 
-<div>
-  Formatted value:
-  <pre>{{amount | numberFormat : format }}</pre>
-</div>
+<p>
+  <label for="useFormatCheckbox">Use Format</label>
+  <input id="useFormatCheckbox" type="checkbox" [(ngModel)]="useFormat">
+</p>
+
+<p>
+  <button (click)="setNull()">Set 'null' value</button> <button (click)="setZero()">Set 'zero' value</button>
+</p>
