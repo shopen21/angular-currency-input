@@ -1,8 +1,8 @@
 import {Directive, forwardRef, HostListener, Input, OnChanges, Provider, SimpleChanges} from "@angular/core";
 import {ControlValueAccessor, DefaultValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
-import {NumberFormatPipe} from "app/number-format/number-format.pipe";
 import NumberFormat = Intl.NumberFormat;
+import {NumberFormatter} from "app/number-format/number-formatter";
 
 const CUSTOM_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -23,12 +23,6 @@ const DEFAULT_NUMBER_FORMAT = new NumberFormat('en-US', {
   providers: [CUSTOM_VALUE_ACCESSOR]
 })
 export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.numberFormat) {
-      this.doWriteValue(this.numericValue);
-    }
-  }
-
   private _numberFormat: NumberFormat = DEFAULT_NUMBER_FORMAT;
 
   @Input('number-format') set numberFormat(value: NumberFormat) {
@@ -40,7 +34,7 @@ export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
   }
 
   @HostListener('input', ['$event.target.value']) onInput(userInputValue): void {
-    let parsedNumber = this.transformer.parse(userInputValue, this.numberFormat);
+    let parsedNumber = NumberFormatter.parse(userInputValue, this.numberFormat);
     if (Number.isNaN(parsedNumber)) {
       // reset good value
       this.doWriteValue(this.numericValue);
@@ -57,7 +51,7 @@ export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
     }
     let clipboardValue = evt.clipboardData.getData('text');
 
-    let parsedNumber = this.transformer.parse(clipboardValue, this.numberFormat) || parseFloat(clipboardValue);
+    let parsedNumber = NumberFormatter.parse(clipboardValue, this.numberFormat) || parseFloat(clipboardValue);
 
     if (!Number.isNaN(parsedNumber)) {
       this.writeValue(parsedNumber);
@@ -82,8 +76,13 @@ export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
   private onChange = (_: number) => {
   };
 
-  constructor(private transformer: NumberFormatPipe,
-              private valueAccessor: DefaultValueAccessor) {
+  constructor(private valueAccessor: DefaultValueAccessor) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.numberFormat) {
+      this.doWriteValue(this.numericValue);
+    }
   }
 
   writeValue(numericValue: number): void {
@@ -92,11 +91,6 @@ export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
     }
     this.numericValue = numericValue;
     this.doWriteValue(numericValue);
-  }
-
-  private doWriteValue(numericValue: number): void {
-    let stringValue = this.isFocused ? NumberFormatPipe.toNumericString(numericValue, this.numberFormat) : this.transformer.transform(numericValue, this.numberFormat);
-    this.valueAccessor.writeValue(stringValue);
   }
 
   registerOnChange(fn: any): void {
@@ -109,5 +103,10 @@ export class NumberFormatDirective implements ControlValueAccessor, OnChanges {
 
   setDisabledState(isDisabled: boolean): void {
     this.valueAccessor.setDisabledState(isDisabled);
+  }
+
+  private doWriteValue(numericValue: number): void {
+    let stringValue = this.isFocused ? NumberFormatter.toNumericString(numericValue, this.numberFormat) : NumberFormatter.transform(numericValue, this.numberFormat);
+    this.valueAccessor.writeValue(stringValue);
   }
 }
