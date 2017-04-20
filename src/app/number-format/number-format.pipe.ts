@@ -18,7 +18,7 @@ export class NumberFormatPipe implements PipeTransform {
     if (!value) return 0;
     let normalizedDecimalString = this.normalizeDecimalString(value, numberFormat);
     if (Number.isNaN(Number.parseFloat(normalizedDecimalString))) return Number.NaN;
-    let regexp = new RegExp(`^-?[0-9]+(${this.escapeRegexp(this.getDecimalSeparator(numberFormat))}[0-9]{0,${options.maximumFractionDigits}})?$`);
+    let regexp = new RegExp(`^-?[0-9]*(${this.escapeRegexp(this.getDecimalSeparator(numberFormat))}[0-9]{0,${options.maximumFractionDigits}})?$`);
     if (!regexp.test(value)) {
       return Number.NaN;
     }
