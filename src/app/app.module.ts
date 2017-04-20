@@ -4,8 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 
 import {AppComponent} from './app.component';
-import {CurrencyMaskModule} from 'ng2-currency-mask';
-import {CurrencyInputModule} from "app/currency-input/currency-input.module";
+import {NumberFormatModule} from './number-format/number-format.module'
 
 @NgModule({
   declarations: [
@@ -15,8 +14,7 @@ import {CurrencyInputModule} from "app/currency-input/currency-input.module";
     BrowserModule,
     FormsModule,
     HttpModule,
-    CurrencyMaskModule,
-    CurrencyInputModule
+    NumberFormatModule
   ],
   providers: [],
   bootstrap: [AppComponent]

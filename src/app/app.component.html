@@ -4,7 +4,7 @@
 
 <p>
   <label for="currencyInput">Demo:</label>
-  <input id="currencyInput" [(ngModel)]="amount" type="text" [sho-currency-input]="formatOptions">
+  <input id="currencyInput" [(ngModel)]="amount" type="text" [number-format]="format">
 </p>
 
 <p>
@@ -14,5 +14,5 @@
 
 <div>
   Formatted value:
-  <pre>{{amount | currencyAdvanced : formatOptions }}</pre>
+  <pre>{{amount | numberFormat : format }}</pre>
 </div>

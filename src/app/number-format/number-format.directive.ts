@@ -1,25 +1,26 @@
-import {Directive, ElementRef, forwardRef, HostListener, Input, Provider, Renderer2} from "@angular/core";
-import {CurrencyFormatOptions} from "app/currency-input/currency-format-options";
+import {Directive, forwardRef, HostListener, Input, Provider} from "@angular/core";
 import {ControlValueAccessor, DefaultValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {CurrencyInputPipe} from "app/currency-input/currency-input.pipe";
+
+import {NumberFormatPipe} from "app/number-format/number-format.pipe";
+import NumberFormat = Intl.NumberFormat;
 
 const CUSTOM_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => CurrencyInputDirective),
+  useExisting: forwardRef(() => NumberFormatDirective),
   multi: true
 };
 
 @Directive({
-  selector: 'input[sho-currency-input][type="text"]',
+  selector: 'input[number-format][type="text"]',
   providers: [CUSTOM_VALUE_ACCESSOR]
 })
-export class CurrencyInputDirective implements ControlValueAccessor {
-
-  @Input('sho-currency-input') inputOptions: CurrencyFormatOptions = new CurrencyFormatOptions();
+export class NumberFormatDirective implements ControlValueAccessor {
+  @Input('number-format') numberFormat: NumberFormat;
 
   @HostListener('input', ['$event.target.value']) onInput(userInputValue): void {
-    let parsedNumber = this.transformer.parse(userInputValue, this.inputOptions);
+    let parsedNumber = this.transformer.parse(userInputValue, this.numberFormat);
     if (Number.isNaN(parsedNumber)) {
+      // reset good value
       this.doWriteValue(this.numericValue);
     }
     else {
@@ -45,11 +46,8 @@ export class CurrencyInputDirective implements ControlValueAccessor {
   private onChange = (_: number) => {
   };
 
-  constructor(private transformer: CurrencyInputPipe,
-              private valueAccessor: DefaultValueAccessor,
-              private element: ElementRef,
-              private renderer: Renderer2) {
-
+  constructor(private transformer: NumberFormatPipe,
+              private valueAccessor: DefaultValueAccessor) {
   }
 
   writeValue(numericValue: number): void {
@@ -58,10 +56,8 @@ export class CurrencyInputDirective implements ControlValueAccessor {
   }
 
   private doWriteValue(numericValue: number): void {
-    let stringValue = (this.isFocused ? CurrencyInputPipe.toNumericString : this.transformer.transform)(numericValue, this.inputOptions);
-    this.renderer.setProperty(this.element.nativeElement, 'maxLength', Number.MAX_VALUE);
+    let stringValue = this.isFocused ? NumberFormatPipe.toNumericString(numericValue, this.numberFormat) : this.transformer.transform(numericValue, this.numberFormat);
     this.valueAccessor.writeValue(stringValue);
-    this.renderer.setProperty(this.element.nativeElement, 'maxLength', this.isFocused ? 17 : Number.MAX_VALUE);
   }
 
   registerOnChange(fn: any): void {

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {CurrencyFormatOptions} from "app/currency-input/currency-format-options";
+import {Component} from '@angular/core';
+import NumberFormat = Intl.NumberFormat;
 
 @Component({
   selector: 'sho-root',
@@ -8,7 +8,23 @@ import {CurrencyFormatOptions} from "app/currency-input/currency-format-options"
 })
 export class AppComponent {
   title = 'sho works!';
-  amount: number = 234;
+  amount: number | null = 234.55;
 
-  public formatOptions: CurrencyFormatOptions = new CurrencyFormatOptions('', ' cents', 2, ' dollars ', ',');
+  public format: NumberFormat = new NumberFormat('pl-PL', {
+    style: 'currency',
+    currency: 'PLN',
+    currencyDisplay: 'symbol',
+    useGrouping: true,
+    minimumIntegerDigits: 1,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  public setNull(): void {
+    this.amount = null;
+  }
+
+  public setZero(): void {
+    this.amount = 0;
+  }
 }
