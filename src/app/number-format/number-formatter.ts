@@ -4,6 +4,9 @@ export class NumberFormatter {
 
   // Converts from Number value to localized format like '$ 1,234,567.89'
   public static transform(value: number, numberFormat?: NumberFormat): string {
+    if (!value) {
+      value = 0;
+    }
     return numberFormat ? numberFormat.format(value) : value.toLocaleString();
   }
 
