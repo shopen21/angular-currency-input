@@ -3,6 +3,11 @@
 </h1>
 
 <p>
+  <label for="unboundInput">Detached:</label>
+  <input id="unboundInput" [(ngModel)]="smth" type="text" number-format>
+</p>
+
+<p>
   <label for="currencyInput">Demo:</label>
   <input id="currencyInput" [(ngModel)]="amount" type="text" [number-format]="format">
 </p>

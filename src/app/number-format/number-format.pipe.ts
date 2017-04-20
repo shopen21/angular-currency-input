@@ -5,7 +5,6 @@ import NumberFormat = Intl.NumberFormat;
   name: 'numberFormat'
 })
 export class NumberFormatPipe implements PipeTransform {
-  private decimalSeparatorField: string;
   private static matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
 
   // Converts from Number value to localized format like '$ 1,234,567.89'
@@ -44,10 +43,7 @@ export class NumberFormatPipe implements PipeTransform {
 
   private getDecimalSeparator(numberFormat?: NumberFormat): string {
     let locale = numberFormat ? numberFormat.resolvedOptions().locale : null;
-    if (this.decimalSeparatorField) {
-      return this.decimalSeparatorField;
-    }
-    return this.decimalSeparatorField = /^1(.+)2$/.exec((1.2).toLocaleString(locale))[1];
+    return  /^1(.+)2$/.exec((1.2).toLocaleString(locale))[1];
   }
 
   private normalizeDecimalString(value: string, numberFormat: NumberFormat): string {
