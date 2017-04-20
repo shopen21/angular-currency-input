@@ -29,6 +29,20 @@ export class NumberFormatDirective implements ControlValueAccessor {
     }
   }
 
+  @HostListener('paste', ['$event']) onPaste(evt): void {
+    if (evt.cancelable) {
+      evt.preventDefault();
+    }
+    let clipboardValue = evt.clipboardData.getData('text');
+
+    let parsedNumber = this.transformer.parse(clipboardValue, this.numberFormat) || parseFloat(clipboardValue);
+
+    if (!Number.isNaN(parsedNumber)) {
+      this.writeValue(parsedNumber);
+      this.onChange(parsedNumber);
+    }
+  }
+
   @HostListener('focus') onFocus(): void {
     this.isFocused = true;
     this.doWriteValue(this.numericValue);
